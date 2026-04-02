@@ -8,7 +8,7 @@ export default function Kuaile8() {
     navigate(url)
   }
 
-  const handleVipNavigate = (url: string) => {
+  const handleVipNavigate = (_url: string) => {
     const confirmed = window.confirm('此功能需要开通会员才能使用\n\n是否立即开通？')
     if (confirmed) {
       navigate('/membership')

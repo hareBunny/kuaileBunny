@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getMembershipStatus, createOrder } from '../api/membership'
+import { createOrder } from '../api/membership'
 import { useUserStore } from '../store/user'
 import './Common.css'
 
