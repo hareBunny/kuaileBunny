@@ -18,7 +18,11 @@ const app = new Hono<{ Bindings: Bindings }>()
 
 // CORS
 app.use('*', cors({
-  origin: ['http://localhost:5173', 'https://your-domain.com'],
+  origin: [
+    'http://localhost:5173', 
+    'https://kuaile8.pages.dev',
+    'https://*.kuaile8.pages.dev'  // 支持所有预览部署
+  ],
   credentials: true
 }))
 
