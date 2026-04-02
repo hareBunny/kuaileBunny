@@ -1,0 +1,26 @@
+{
+  "name": "kuaile8-crawler",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "crawl": "node simple-crawler.js",
+    "crawl:official": "node official-crawler.js",
+    "crawl:jisu": "node jisu-crawler.js",
+    "crawl:szxk": "node szxk-crawler.js",
+    "crawl:szxk:history": "node szxk-crawler.js --history 100",
+    "crawl:demo": "node demo-crawler.js",
+    "test": "node test.js",
+    "test:api": "node test-api.js",
+    "test:flow": "node test-flow.js",
+    "schedule": "node cron-config.js",
+    "pm2:start": "pm2 start ecosystem.config.cjs",
+    "pm2:stop": "pm2 stop kuaile8-crawler",
+    "pm2:restart": "pm2 restart kuaile8-crawler",
+    "pm2:logs": "pm2 logs kuaile8-crawler"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "node-cron": "^3.0.3"
+  }
+}
