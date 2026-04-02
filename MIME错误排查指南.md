@@ -137,6 +137,10 @@ Uploading...
 
 ### 问题: Build output directory 配置错误
 
+**错误现象**: 浏览器控制台显示 `main.tsx:1 Failed to load module script`
+
+这说明Cloudflare在尝试加载源文件（main.tsx）而不是构建后的文件（/assets/index-xxx.js）。
+
 **检查方法**:
 1. Cloudflare Dashboard → kuaile8 → Settings
 2. Builds & deployments
@@ -147,9 +151,15 @@ Uploading...
 h5/dist
 ```
 
+**常见错误配置**:
+- ❌ `dist` - 这会让Cloudflare在项目根目录找dist，但实际在h5/dist
+- ❌ `/dist` - 同上
+- ❌ `./h5/dist` - 不需要./前缀
+- ❌ `h5/dist/` - 不需要尾部斜杠
+
 **如果配置错误，修改步骤**:
 1. 点击 **Edit configuration**
-2. 修改 **Build output directory** 为 `h5/dist`
+2. 修改 **Build output directory** 为 `h5/dist`（精确输入，不要多余字符）
 3. 点击 **Save**
 4. 回到 Deployments → **Retry deployment**
 
