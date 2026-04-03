@@ -3,16 +3,16 @@
  * API文档: https://www.mxnzp.com
  */
 
-const https = require('https');
-const { exec } = require('child_process');
-const util = require('util');
+import https from 'https';
+import { exec } from 'child_process';
+import util from 'util';
 const execPromise = util.promisify(exec);
 
 // 配置
 const CONFIG = {
   APP_ID: process.env.MXNZP_APP_ID || 'ceoplkrvuljhijpk',
-  APP_SECRET: process.env.MXNZP_APP_SECRET || '', // 需要设置
-  API_URL: 'https://www.mxnzp.com/api/lottery/common/aim_lottery',
+  APP_SECRET: process.env.MXNZP_APP_SECRET || 'lCG5xp0E8UgzMtmwcUw2xUByGShH6csg',
+  API_URL: 'https://www.mxnzp.com/api/lottery/common/latest',
   CODE: 'kl8', // 快乐8
 };
 
@@ -42,14 +42,10 @@ function httpsGet(url) {
 /**
  * 获取最新开奖数据
  */
-async function getLatestData(expect = null) {
+async function getLatestData() {
   try {
-    // 构建URL
-    let url = `${CONFIG.API_URL}?code=${CONFIG.CODE}&app_id=${CONFIG.APP_ID}&app_secret=${CONFIG.APP_SECRET}`;
-    
-    if (expect) {
-      url += `&expect=${expect}`;
-    }
+    // 构建URL - 使用latest接口获取最新数据
+    const url = `${CONFIG.API_URL}?code=${CONFIG.CODE}&app_id=${CONFIG.APP_ID}&app_secret=${CONFIG.APP_SECRET}`;
     
     console.log('请求URL:', url.replace(CONFIG.APP_SECRET, '***'));
     
@@ -105,14 +101,9 @@ async function saveToDatabase(data) {
     const drawDate = new Date(data.time).getTime();
     const createdAt = Date.now();
     
-    // 构建SQL
+    // 构建SQL（单行，避免换行问题）
     const numbersJson = JSON.stringify(numbers);
-    const sql = `INSERT INTO lottery_results (lottery_type, draw_no, draw_date, numbers, sum, created_at) 
-                 VALUES ('kuaile8', '${data.expect}', ${drawDate}, '${numbersJson}', ${sum}, ${createdAt})
-                 ON CONFLICT(draw_no) DO UPDATE SET 
-                 numbers = excluded.numbers,
-                 sum = excluded.sum,
-                 draw_date = excluded.draw_date`;
+    const sql = `INSERT INTO lottery_results (lottery_type, draw_no, draw_date, numbers, sum, created_at) VALUES ('kuaile8', '${data.expect}', ${drawDate}, '${numbersJson}', ${sum}, ${createdAt}) ON CONFLICT(draw_no) DO UPDATE SET numbers = excluded.numbers, sum = excluded.sum, draw_date = excluded.draw_date`;
     
     // 执行SQL
     const command = `wrangler d1 execute kuaile8 --remote --command="${sql}"`;
@@ -173,8 +164,6 @@ async function main() {
 }
 
 // 运行
-if (require.main === module) {
-  main();
-}
+main();
 
-module.exports = { getLatestData, parseNumbers, saveToDatabase };
+export { getLatestData, parseNumbers, saveToDatabase };

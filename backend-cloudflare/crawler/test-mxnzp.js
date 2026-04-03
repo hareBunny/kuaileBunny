@@ -2,7 +2,7 @@
  * 测试MXNZP API
  */
 
-const https = require('https');
+import https from 'https';
 
 const APP_ID = 'ceoplkrvuljhijpk';
 const APP_SECRET = process.env.MXNZP_APP_SECRET || ''; // 从环境变量获取
@@ -44,11 +44,12 @@ async function test() {
   console.log('');
   
   try {
-    // 测试获取最新数据
-    console.log('1️⃣ 测试获取最新快乐8数据...');
-    const url = `https://www.mxnzp.com/api/lottery/common/aim_lottery?code=kl8&app_id=${APP_ID}&app_secret=${APP_SECRET}`;
+    // 测试1: 尝试不传期号（获取最新）
+    console.log('1️⃣ 测试获取最新快乐8数据（不传期号）...');
+    let url = `https://www.mxnzp.com/api/lottery/common/latest?code=kl8&app_id=${APP_ID}&app_secret=${APP_SECRET}`;
     
-    const response = await httpsGet(url);
+    console.log('尝试URL: /api/lottery/common/latest');
+    let response = await httpsGet(url);
     
     console.log('\n响应状态码:', response.code);
     console.log('响应消息:', response.msg);
@@ -74,12 +75,44 @@ async function test() {
       } else {
         console.log('\n⚠️  警告: 号码数量不正确，应该是20个');
       }
+      
+      // 测试2: 使用获取到的期号再次查询
+      console.log('\n\n2️⃣ 测试使用期号查询...');
+      const expect = response.data.expect;
+      url = `https://www.mxnzp.com/api/lottery/common/aim_lottery?code=kl8&expect=${expect}&app_id=${APP_ID}&app_secret=${APP_SECRET}`;
+      
+      const response2 = await httpsGet(url);
+      console.log('响应状态码:', response2.code);
+      console.log('响应消息:', response2.msg);
+      
+      if (response2.code === 1) {
+        console.log('✅ 指定期号查询成功！');
+      }
     } else {
       console.log('\n❌ API调用失败');
       console.log('错误信息:', response.msg);
       
-      if (response.msg && response.msg.includes('app_secret')) {
-        console.log('\n💡 提示: APP_SECRET可能不正确，请检查');
+      // 尝试生成一个期号
+      console.log('\n\n2️⃣ 尝试使用今天的期号...');
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const expect = `${year}${month}${day}001`; // 假设第一期
+      
+      console.log('生成期号:', expect);
+      url = `https://www.mxnzp.com/api/lottery/common/aim_lottery?code=kl8&expect=${expect}&app_id=${APP_ID}&app_secret=${APP_SECRET}`;
+      
+      response = await httpsGet(url);
+      console.log('\n响应状态码:', response.code);
+      console.log('响应消息:', response.msg);
+      
+      if (response.code === 1) {
+        console.log('\n✅ API调用成功！');
+        console.log('\n返回数据:');
+        console.log('  期号:', response.data.expect);
+        console.log('  号码:', response.data.openCode);
+        console.log('  时间:', response.data.time);
       }
     }
     
