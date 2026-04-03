@@ -8,13 +8,11 @@ import Profile from './pages/Profile'
 import Membership from './pages/Membership'
 import Login from './pages/Login'
 import Disclaimer from './pages/Disclaimer'
-import DisclaimerModal from './components/DisclaimerModal'
 import './App.css'
 
 function App() {
   return (
     <BrowserRouter>
-      <DisclaimerModal />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/kuaile8" element={<Kuaile8 />} />
